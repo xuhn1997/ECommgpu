@@ -160,5 +160,5 @@ def lightgbm_model():
 if __name__ == '__main__':
     # 保存好线上训练集
     online_train_data = generate_all_feature()
-    online_train_data.to_csv("../online_feature_data/online_test_data", index=False)
+    online_train_data.to_csv("../online_feature_data/online_train_data", index=False)
     print("save successfully........")
