@@ -106,7 +106,6 @@ def generate_all_feature():
     recall_train = pd.merge(left=recall_train, right=shop_ID_feature, on=["shopID"], how="left")
     recall_train = pd.merge(left=recall_train, right=brand_ID_feature, on=["brandID"], how="left")
 
-
     """
     以上之后的总的特征就是
     userID, itemID, sim, label, sex, age, ability, categoryID, shopID, brandID category_median
@@ -154,5 +153,12 @@ def lightgbm_model():
     最后生成测试集利用1到16生成测试集特征进行预测。。。。。。。还未完成。。。。。。
     """
 
+
 # if __name__ == '__main__':
 #     # 生成全部特征
+
+if __name__ == '__main__':
+    # 保存好线上训练集
+    online_train_data = generate_all_feature()
+    online_train_data.to_csv("../online_feature_data/online_test_data", index=False)
+    print("save successfully........")
