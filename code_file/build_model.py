@@ -114,7 +114,7 @@ def generate_all_feature():
     return recall_train
 
 
-def lightgbm_model():
+def lightgbm_model(recall_train):
     """
     进行light_gbm的函数
     :return:
@@ -127,11 +127,11 @@ def lightgbm_model():
     # 定义评估的指标
     metric = 'binary_logloss'
     # 定义好lgbm模型
-    model = lgb.LGBMClassifier(boosting_type='gbdt', n_estimators=1000,
+    model = lgb.LGBMClassifier(boosting_type='gbdt', n_estimators=30000,
                                objective='binary', learning_rate=0.1,
                                num_leaves=31, random_state=8082)
 
-    recall_train = generate_all_feature()
+    # recall_train = generate_all_feature()
     # lightgbm需要分训练集以及验证集
     features = [x for x in recall_train.columns
                 if x not in ['userID', 'itemID', 'label']]
@@ -148,6 +148,7 @@ def lightgbm_model():
               early_stopping_rounds=30, verbose=1)
     # 保存好的训练好的模型
     joblib.dump(model, '../lightgbm_model_save/lightgbm_model.pkl')
+    print("save successfully........")
 
     """
     最后生成测试集利用1到16生成测试集特征进行预测。。。。。。。还未完成。。。。。。
@@ -157,8 +158,15 @@ def lightgbm_model():
 # if __name__ == '__main__':
 #     # 生成全部特征
 
+# if __name__ == '__main__':
+#     # 保存好线上训练集
+#     online_train_data = generate_all_feature()
+#     online_train_data.to_csv("../online_feature_data/online_train_data", index=False)
+#     print("save successfully........")
+
 if __name__ == '__main__':
-    # 保存好线上训练集
-    online_train_data = generate_all_feature()
-    online_train_data.to_csv("../online_feature_data/online_train_data", index=False)
-    print("save successfully........")
+    # 开始运行决策树模型
+    # 获取线上训练集
+    online_data = pd.read_csv("../online_feature_data/online_train_data")
+    lightgbm_model(online_data)
+
