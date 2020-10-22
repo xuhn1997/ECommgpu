@@ -112,7 +112,7 @@ for user in users:
 
 # 最后将召回的字典保存在txt文件中
 
-recall_result_file = open("../recall_list/result_recall.txt", 'w+')
+recall_result_file = open("../recall_list/result_recall.txt", 'w')
 recall_result_file.write(str(recall_list))
 recall_result_file.close()
 
