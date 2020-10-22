@@ -66,28 +66,49 @@ print("begin to recommend..........")
 
 for user in users:
     recall_list.setdefault(int(user), [])
-    # tmp = df1[df1['A'] == user]
+
     tmp = test_data1[test_data1['userID'] == user]
-    # recall_list[int(user)].append((tmp['itemID'], tmp['pred_prob']))
-
-    if len(recall_list[int(user)]) < 50:
-        recall_list[int(user)].append((tmp['itemID'], tmp['pred_prob']))
-
-
-print("the process of code start.....")
-"""
-对于不够五十商品的进行冷启动的操作
-"""
-for user in users:
-    user = int(user)
-    if len(recall_list[user]) < 50:
+    """
+       先判断用户的商品是否足够50个？
+    """
+    if len(tmp) < 50:
         """
-        进行冷启动
+          需要进行冷启动的操作
         """
-        tmp_length = len(recall_list[user])
-        numbers = 50 - tmp_length
-        item_lists = code_start(numbers)  # 返回的是一个链表的形式[(item, 0), (item1, 0)]
+        numbers = 50 - len(tmp)
+        item_lists = code_start(numbers)
+        # for i in range(len(tmp)):
+        # matrix = data[data['userID'].isin(user_groups[groupID])][['userID', 'itemID', 'behavior', 'day']].values
+        matrix = tmp[['itemID', 'pred_prob']].values
+        for row in matrix:
+            recall_list[int(user)].append((row[0], row(1)))
         recall_list[user].extend(item_lists)  # 将其进行合并
+
+        continue
+    else:
+        """
+        进行正常推荐
+        """
+        matrix = tmp[['itemID', 'pred_prob']].values
+        for row in matrix:
+            recall_list[int(user)].append((row[0], row[1]))
+            if len(recall_list[int(user)]) == 50:
+                break
+
+# print("the process of code start.....")
+# """
+# 对于不够五十商品的进行冷启动的操作
+# """
+# for user in users:
+#     user = int(user)
+#     if len(recall_list[user]) < 50:
+#         """
+#         进行冷启动
+#         """
+#         tmp_length = len(recall_list[user])
+#         numbers = 50 - tmp_length
+#         item_lists = code_start(numbers)  # 返回的是一个链表的形式[(item, 0), (item1, 0)]
+#         recall_list[user].extend(item_lists)  # 将其进行合并
 
 # 最后将召回的字典保存在txt文件中
 
@@ -103,4 +124,3 @@ fr = open("../recall_list/result_recall.txt", 'r+)
 dic = eval(fr.read())
 fr.close()
 """
-
