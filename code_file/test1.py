@@ -60,5 +60,24 @@ df = pd.DataFrame([['a', 1, 'c'], ['a', 3, 'a'], ['a', 2, 'b'],
                    ['c', 3, 'a'], ['c', 2, 'b'], ['c', 1, 'c'],
                    ['b', 2, 'b'], ['b', 3, 'a'], ['b',1, 'c']], columns=['A', 'B', 'C'])
 
+print(df)
+
+df1 = df.groupby('A', sort=False).apply(lambda x:x.sort_values('B', ascending=True)).reset_index(drop=True)
+
+print(df1)
+
+users = df['A'].unique()
+print(users)
+
+users = users.tolist()
+print(users)
+
+# it = 1
+for user in users:
+    # print(user)
+    tmp = df1[df1['A'] == user]
+    print(tmp)
+    print(tmp['B'])
+    break
 
 

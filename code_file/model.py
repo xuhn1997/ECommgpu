@@ -91,14 +91,16 @@ def code_start(N):
     解决用户冷启动问题，给用户推荐N个商品
     :param N:
     :return:
+    返回一个链表比较好。。。。
     """
-    item_users = dict()
+    item_users = []
     filename_item = "../data/df_item_sort.csv"
     item_pd = pd.read_csv(filename_item)
     numbers = 0
     for item, item_count in item_pd[['itemID', 'itemCount']].values:
-        item_users.setdefault(item, 0)
-        item_users[item] = item_count
+        # item_users.setdefault(item, 0)
+        # item_users[item] = 0
+        item_users.append((item, 0.))
         numbers = numbers + 1
         if numbers == N:
             # 到达指定的个数则取出退出循环
