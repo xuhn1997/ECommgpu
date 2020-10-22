@@ -53,6 +53,12 @@ import scipy as scp
 
 
 # 将用户日志中的item变为整型的类型
-df = pd.read_csv("../data/df_behavior.csv")
-df[[column]] = df[[column]].astype(type)
+# df = pd.read_csv("../data/df_behavior.csv")
+# df[[column]] = df[[column]].astype(type)
+import pandas as pd
+df = pd.DataFrame([['a', 1, 'c'], ['a', 3, 'a'], ['a', 2, 'b'],
+                   ['c', 3, 'a'], ['c', 2, 'b'], ['c', 1, 'c'],
+                   ['b', 2, 'b'], ['b', 3, 'a'], ['b',1, 'c']], columns=['A', 'B', 'C'])
+
+
 
