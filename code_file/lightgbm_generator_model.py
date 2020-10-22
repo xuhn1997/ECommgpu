@@ -62,6 +62,8 @@ recall_list = dict()
 users = test_data1['userID'].unique()
 users = users.tolist()
 
+print("begin to recommend..........")
+
 for user in users:
     recall_list.setdefault(int(user), [])
     # tmp = df1[df1['A'] == user]
@@ -71,6 +73,8 @@ for user in users:
     if len(recall_list[int(user)]) < 50:
         recall_list[int(user)].append((tmp['itemID'], tmp['pred_prob']))
 
+
+print("the process of code start.....")
 """
 对于不够五十商品的进行冷启动的操作
 """
