@@ -81,7 +81,7 @@ for user in users:
         # matrix = data[data['userID'].isin(user_groups[groupID])][['userID', 'itemID', 'behavior', 'day']].values
         matrix = tmp[['itemID', 'pred_prob']].values
         for row in matrix:
-            recall_list[int(user)].append((row[0], row(1)))
+            recall_list[int(user)].append((row[0], row[1]))
         recall_list[user].extend(item_lists)  # 将其进行合并
 
         continue
