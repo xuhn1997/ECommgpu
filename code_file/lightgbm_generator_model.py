@@ -84,7 +84,7 @@ for user in users:
         item_lists = code_start(numbers)
         # for i in range(len(tmp)):
         # matrix = data[data['userID'].isin(user_groups[groupID])][['userID', 'itemID', 'behavior', 'day']].values
-        matrix = tmp[['itemID', 'pred_prob']].values
+        matrix = tmp[['itemID', 'pred_prob']].values  # 这样的话数据会变成浮点数
         for row in matrix:
             recall_list[int(user)].append((row[0], row[1]))
         recall_list[user].extend(item_lists)  # 将其进行合并
@@ -94,7 +94,7 @@ for user in users:
         """
         进行正常推荐
         """
-        matrix = tmp[['itemID', 'pred_prob']].values
+        matrix = tmp[['itemID', 'pred_prob']].values  # 这样的话数据会变成浮点数
         for row in matrix:
             recall_list[int(user)].append((row[0], row[1]))
             if len(recall_list[int(user)]) == 50:
