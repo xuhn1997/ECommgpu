@@ -97,8 +97,18 @@ def get_underline_recall_data():
                               how='left')
     recall_data_df = recall_data_df.rename(columns={'behavior': 'label'})
     """
+       此处要加上day， behavior两个特征
+    """
+    df = pd.read_csv("../data/df_behavior_train.csv")
+    df_train_data = df[df['day'] < 21]
+    df_train_data = df_train_data[['userID', 'itemID', 'behavior', 'day']]
+    # 然后进行合并过程
+    recall_data_df = pd.merge(left=recall_data_df, right=df_train_data,
+                              on=[['userID', 'itemID']], how='left')
+
+    """
     此时以上的数据格式就是
-    userID, itemID, sim, label
+    userID, itemID, sim, label, behavior, day
     """
     return recall_data_df
 
@@ -118,7 +128,7 @@ def label_deal(x):
 def down_sample(df, percent=10):
     """
     对于召回的数据进行采用
-    数据格式为userID, itemID, sim, label
+    数据格式为userID, itemID, sim, label, behavior, day
     :param df:
     :param percent:
     :return:
@@ -162,7 +172,7 @@ def get_all_underline_feature():
 
     """
     之后的总的特征就是userID, itemID, sim, label，'sex', 'age', 
-    'ability'， categoryID, shopID, brandID
+    'ability'， categoryID, shopID, brandID, behavior, day
     """
     # 最后还要对于给label进行一个值的转化
     recall_all['label'] = recall_all['label'].apply(label_deal)
@@ -173,4 +183,3 @@ def get_all_underline_feature():
 if __name__ == '__main__':
     # 先保存好召回集, 注意保存好了要注释掉
     recall_underline()
-

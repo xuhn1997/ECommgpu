@@ -22,21 +22,34 @@ df1 = pd.DataFrame({
     'A': [1, 1, 2, 2, 3, 3],
     'B': [2, 3, 4, 5, 7, 8],
     'C': [0.9, 0.8, 0.7, 0.8, 0.9, 0.8],
-    'D': [1, 0, 0, 1, 0, 0]
+    'D': [1, 0, 0, 1, 0, 0],
+    'E': [1, 0, 4, 5, 6, 6]
 })
 
-print(df1)
+df2 = pd.DataFrame({
+    'A': [1, 1, 2, 2, 3, 3],
+    'B': [2, 3, 4, 5, 7, 8],
+    'C': [0.9, 0.8, 0.7, 0.8, 0.9, 0.8],
+    'D': [1, 0, 0, 1, 0, 0]
+})
+df3 = pd.concat([df1, df2]).reset_index(drop=True)
 
-index = np.random.randint(4, size=10 * 2)
-print(index)
-print(index.shape)
-data1 = df1[df1['D'] == 1]
-data0 = df1[df1['D'] == 0]
-print(data0)
+print(df3)
 
-lower_data0 = data0.iloc[list(index)]
-print(lower_data0.shape)
+# index = np.random.randint(4, size=10 * 2)
+# print(index)
+# print(index.shape)
+# data1 = df1[df1['D'] == 1]
+# data0 = df1[df1['D'] == 0]
+# print(data0)
+# index = np.random.randint(len(data0), size=10 * 2)
+# print(len(data0))
+# print(index)
+# print(index.shape)
 
-data0_1 = pd.concat([lower_data0, data1])
-print(data0_1)
-print(data0_1.shape)
+# lower_data0 = data0.iloc[list(index)]
+# print(lower_data0.shape)
+#
+# data0_1 = pd.concat([lower_data0, data1])
+# print(data0_1)
+# print(data0_1.shape)

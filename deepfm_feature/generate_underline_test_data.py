@@ -26,11 +26,16 @@ def get_deepfm_test_data():
     recall_df = pd.merge(left=recall_df, right=users_df, on=['userID'], how='left')
     recall_df = pd.merge(left=recall_df, right=items_df, on=['itemID'], how='left')
 
+    df = pd.read_csv("../data/df_behavior_train.csv")
+    # df_train_data = df[df['day'] < 21]
+    df_train_data = df[['userID', 'itemID', 'behavior', 'day']]
+
+    recall_df = pd.merge(left=recall_df, right=df_train_data,
+                         on=[['userID', 'itemID']], how='left')
+
     """
     合并之后总的特征就是
     userID, itemID, sim, 'sex', 'age', 
-    'ability'， categoryID, shopID, brandID
+    'ability'， categoryID, shopID, brandID, behavior, day
     """
     return recall_df
-
-
