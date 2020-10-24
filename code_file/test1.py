@@ -80,10 +80,21 @@ import scipy as scp
 #     print(tmp['B'])
 #     break
 
+#
+# for i in range(10):
+#     print("你好")
+#     for j in range(8):
+#         print("xuhn")
+#         if j == 3:
+#             break
 
-for i in range(10):
-    print("你好")
-    for j in range(8):
-        print("xuhn")
-        if j == 3:
-            break
+import tensorflow as tf
+import numpy as np
+import pandas as pd
+
+tmp = np.random.randint(100, size=[10, 4, 1])
+tmp = tf.reshape(tmp, (10, 4, 1))
+
+tmp1 = tf.reduce_sum(tmp, axis=2)
+
+print(tmp1.shape)

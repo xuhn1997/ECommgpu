@@ -22,20 +22,20 @@ def get_deepfm_test_data():
 
     # 对于recall进行数据筛选
     recall_df = recall_test_data[['userID', 'itemID', 'sim']]
-    # 然后进行数据合并的过程
-    recall_df = pd.merge(left=recall_df, right=users_df, on=['userID'], how='left')
-    recall_df = pd.merge(left=recall_df, right=items_df, on=['itemID'], how='left')
 
     df = pd.read_csv("../data/df_behavior_train.csv")
     # df_train_data = df[df['day'] < 21]
     df_train_data = df[['userID', 'itemID', 'behavior', 'day']]
 
     recall_df = pd.merge(left=recall_df, right=df_train_data,
-                         on=[['userID', 'itemID']], how='left')
+                         on=['userID', 'itemID'], how='left')
+    # 然后进行数据合并的过程
+    recall_df = pd.merge(left=recall_df, right=users_df, on=['userID'], how='left')
+    recall_df = pd.merge(left=recall_df, right=items_df, on=['itemID'], how='left')
 
     """
     合并之后总的特征就是
-    userID, itemID, sim, 'sex', 'age', 
-    'ability'， categoryID, shopID, brandID, behavior, day
+    userID, itemID, sim, behavior, day, 'sex', 'age', 
+    'ability'， categoryID, shopID, brandID, 
     """
     return recall_df

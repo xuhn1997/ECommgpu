@@ -23,7 +23,7 @@ df1 = pd.DataFrame({
     'B': [2, 3, 4, 5, 7, 8],
     'C': [0.9, 0.8, 0.7, 0.8, 0.9, 0.8],
     'D': [1, 0, 0, 1, 0, 0],
-    'E': [1, 0, 4, 5, 6, 6]
+
 })
 
 df2 = pd.DataFrame({
@@ -36,6 +36,13 @@ df3 = pd.concat([df1, df2]).reset_index(drop=True)
 
 print(df3)
 
+"""
+测试map函数
+"""
+map_dic = {1:100, 0:10000}
+df3['D'] = df3['D'].map(map_dic)
+
+print(df3)
 # index = np.random.randint(4, size=10 * 2)
 # print(index)
 # print(index.shape)

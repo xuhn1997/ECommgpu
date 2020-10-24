@@ -169,4 +169,3 @@ if __name__ == '__main__':
     # 获取线上训练集
     online_data = pd.read_csv("../online_feature_data/online_train_data")
     lightgbm_model(online_data)
-

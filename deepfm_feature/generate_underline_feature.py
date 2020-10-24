@@ -6,11 +6,10 @@
 import sys
 import os
 
-from scipy.sparse import load_npz
-
 curPath = os.path.abspath(os.path.dirname(__file__))
 rootPath = os.path.split(curPath)[0]
 sys.path.append(rootPath)
+from scipy.sparse import load_npz
 import numpy as np
 import pandas as pd
 from collections import defaultdict
@@ -93,7 +92,7 @@ def get_underline_recall_data():
     labels_df = get_underline_labels()
 
     # 然后就进行结合
-    recall_data_df = pd.merge(left=recommends_df, right=labels_df, on=[['userID', 'itemID']],
+    recall_data_df = pd.merge(left=recommends_df, right=labels_df, on=['userID', 'itemID'],
                               how='left')
     recall_data_df = recall_data_df.rename(columns={'behavior': 'label'})
     """
@@ -104,7 +103,7 @@ def get_underline_recall_data():
     df_train_data = df_train_data[['userID', 'itemID', 'behavior', 'day']]
     # 然后进行合并过程
     recall_data_df = pd.merge(left=recall_data_df, right=df_train_data,
-                              on=[['userID', 'itemID']], how='left')
+                              on=['userID', 'itemID'], how='left')
 
     """
     此时以上的数据格式就是
@@ -171,8 +170,8 @@ def get_all_underline_feature():
     recall_all = pd.merge(left=recall_all, right=items_df, on=['itemID'], how='left')
 
     """
-    之后的总的特征就是userID, itemID, sim, label，'sex', 'age', 
-    'ability'， categoryID, shopID, brandID, behavior, day
+    之后的总的特征就是userID, itemID, sim, behavior, day, label，'sex', 'age', 
+    'ability'， categoryID, shopID, brandID, 
     """
     # 最后还要对于给label进行一个值的转化
     recall_all['label'] = recall_all['label'].apply(label_deal)
@@ -182,4 +181,9 @@ def get_all_underline_feature():
 
 if __name__ == '__main__':
     # 先保存好召回集, 注意保存好了要注释掉
-    recall_underline()
+    # recall_underline()
+    recall = get_all_underline_feature()
+    recall_labels = recall[recall['label'] == 1]
+    recall_labels = recall_labels['label']
+    print(recall.columns)
+    print(recall_labels[0:10])
