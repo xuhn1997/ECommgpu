@@ -6,12 +6,14 @@ rootPath = os.path.split(curPath)[0]
 sys.path.append(rootPath)
 
 import tensorflow as tf
+
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 import pandas as pd
 import numpy as np
 
 from tensorflow import keras
 from deepfm_feature.train_data_deal import deal_underline_train_data
+from sklearn import preprocessing
 
 # 定义超参数
 FEATURE_SIZE = 601221  # 此处为转化成特征之后的特征总数
@@ -25,6 +27,19 @@ BATCH_SIZE = 1024
        'ability', 'categoryID', 'shopID', 'brandID'],
 """
 data_index, data_value = deal_underline_train_data()
+
+"""漏了一部分就是数据预处理，对于连续值进行归一化操作！！！！！"""
+min_max_scaler = preprocessing.MinMaxScaler(feature_range=(0.1, 1))
+# 连续特征有哪些'sim', 'age'
+tmp1 = np.array(data_value['sim'])
+tmp1 = np.reshape(tmp1, (-1, 1))
+
+tmp2 = np.array((data_value['age']))
+tmp2 = np.reshape(tmp2, (-1, 1))
+
+data_value['sim'] = min_max_scaler.fit_transform(tmp1)
+data_value['age'] = min_max_scaler.fit_transform(tmp2)
+
 # 取得标签的值
 train_y = np.array(data_index['label'])
 train_y = np.reshape(train_y, (-1, 1))
@@ -39,10 +54,13 @@ train_data_value = np.array(train_data_value)
 
 num_input = train_data_value.shape[0]
 STEPS = num_input // BATCH_SIZE
-
-"""漏了一部分就是数据预处理，对于连续值进行归一化操作！！！！！"""
+print(num_input)
+print("**********")
+print(STEPS)
 
 # 定义placeholder部分
+
+iS_training = tf.placeholder(tf.bool, name="is_training")
 feature_index = tf.placeholder(tf.int32, shape=[None, None], name="feature_index")
 feature_value = tf.placeholder(tf.float32, shape=[None, None], name="feature_value")
 
@@ -58,11 +76,14 @@ def weight(shape):
 # 定义相关的变量
 
 # 以下是deeppart部分的参数变量
-D_W1 = tf.Variable(weight([FIELD_SIZE * EMBEDDING_SIZE, 32]))
-D_B1 = tf.Variable(tf.zeros(shape=[1, 32]))
+D_W1 = tf.Variable(weight([FIELD_SIZE * EMBEDDING_SIZE, 512]))
+D_B1 = tf.Variable(tf.zeros(shape=[1, 512]))
 
-D_W2 = tf.Variable(weight([32, 32]))
-D_B2 = tf.Variable(tf.zeros(shape=[1, 32]))
+D_W2 = tf.Variable(weight([512, 256]))
+D_B2 = tf.Variable(tf.zeros(shape=[1, 256]))
+
+D_W3 = tf.Variable(weight([256, 32]))
+D_B3 = tf.Variable(tf.zeros(shape=[1, 32]))
 
 # 接下来就是最后一层即sigmoid的参数
 """
@@ -126,8 +147,18 @@ def deep_part(x_input):
     :param x_input:为输入数据，维度就是(-1, filed_size * embedding_size)
     :return:
     """
-    hidden = tf.nn.relu(tf.matmul(x_input, D_W1) + D_B1)
-    deep_out = tf.nn.relu(tf.matmul(hidden, D_W2) + D_B2)
+    # hidden = tf.nn.relu(tf.matmul(x_input, D_W1) + D_B1)
+    hidden1 = tf.matmul(x_input, D_W1) + D_B1
+    hidden1 = tf.layers.dropout(hidden1, rate=0.5, training=iS_training)
+    hidden1 = tf.layers.batch_normalization(hidden1, training=iS_training)
+    hidden1 = tf.nn.relu(hidden1)
+
+    hidden2 = tf.matmul(hidden1, D_W2) + D_B2
+    hidden2 = tf.layers.dropout(hidden2, rate=0.5, training=iS_training)
+    hidden2 = tf.layers.batch_normalization(hidden2, training=iS_training)
+    hidden2 = tf.nn.relu(hidden2)
+    """进行正则化"""
+    deep_out = tf.nn.relu(tf.matmul(hidden2, D_W3) + D_B3)
 
     return deep_out  # 此时的维度就是(-1, 32)
 
@@ -173,17 +204,17 @@ optimizer = tf.train.AdamOptimizer(learning_rate=0.001, beta1=0.9, beta2=0.999,
 """
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
-    for epoch in range(1000):
+    for epoch in range(10000):
         for step in range(STEPS):
             epoch_loss, _ = sess.run([loss, optimizer], feed_dict={
                 feature_index: train_data_index[step * BATCH_SIZE:(step + 1) * BATCH_SIZE],
                 feature_value: train_data_value[step * BATCH_SIZE:(step + 1) * BATCH_SIZE],
-                label: train_y[step * BATCH_SIZE: (step + 1) * BATCH_SIZE]})
+                label: train_y[step * BATCH_SIZE: (step + 1) * BATCH_SIZE], iS_training: True})
 
-        if epoch % 1 == 0:
+        if epoch % 1000 == 0:
             print("epoch %s, loss is %s" % (str(epoch), str(epoch_loss)))
 
     """保存好训练的网络"""
-    # saver = tf.train.Saver()
-    # saver.save(sess, '../deepfm_save_model/deepfm_model_saver.ckpt')
+    saver = tf.train.Saver()
+    saver.save(sess, '../deepfm_save_model/deepfm_model_saver.ckpt')
     print("保存好DeepFM网络............")
