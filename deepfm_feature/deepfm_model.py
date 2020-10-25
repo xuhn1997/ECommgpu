@@ -211,7 +211,7 @@ with tf.Session() as sess:
                 feature_value: train_data_value[step * BATCH_SIZE:(step + 1) * BATCH_SIZE],
                 label: train_y[step * BATCH_SIZE: (step + 1) * BATCH_SIZE], iS_training: True})
 
-        if epoch % 1000 == 0:
+        if epoch % 100 == 0:
             print("epoch %s, loss is %s" % (str(epoch), str(epoch_loss)))
 
     """保存好训练的网络"""
