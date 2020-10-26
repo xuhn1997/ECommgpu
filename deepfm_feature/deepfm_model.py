@@ -7,13 +7,19 @@ sys.path.append(rootPath)
 
 import tensorflow as tf
 
+config = tf.ConfigProto()
+config.gpu_options.per_process_gpu_memory_fraction = 0.5  # 程序最多只能占用指定gpu50%的显存
+config.gpu_options.allow_growth = True  # 程序按需申请内存
+sess = tf.Session(config=config)
+
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 import pandas as pd
 import numpy as np
 
-from tensorflow import keras
+# from tensorflow import keras
 from deepfm_feature.train_data_deal import deal_underline_train_data
 from sklearn import preprocessing
+from code_file.utils import reduce_mem_usage
 
 # 定义超参数
 FEATURE_SIZE = 601221  # 此处为转化成特征之后的特征总数
@@ -27,6 +33,8 @@ BATCH_SIZE = 1024
        'ability', 'categoryID', 'shopID', 'brandID'],
 """
 data_index, data_value = deal_underline_train_data()
+data_index = reduce_mem_usage(data_index)
+data_value = reduce_mem_usage(data_value)
 
 """漏了一部分就是数据预处理，对于连续值进行归一化操作！！！！！"""
 min_max_scaler = preprocessing.MinMaxScaler(feature_range=(0.1, 1))
@@ -52,6 +60,14 @@ train_data_index = np.array(train_data_index)
 train_data_value = data_value[feature]
 train_data_value = np.array(train_data_value)
 
+"""对于训练集打乱顺序"""
+randnum = np.random.randint(0,100)
+np.random.seed(randnum)
+np.random.shuffle(train_data_index)
+
+np.random.seed(randnum)
+np.random.shuffle(train_data_value)
+
 num_input = train_data_value.shape[0]
 STEPS = num_input // BATCH_SIZE
 print(num_input)
@@ -76,13 +92,13 @@ def weight(shape):
 # 定义相关的变量
 
 # 以下是deeppart部分的参数变量
-D_W1 = tf.Variable(weight([FIELD_SIZE * EMBEDDING_SIZE, 512]))
-D_B1 = tf.Variable(tf.zeros(shape=[1, 512]))
+D_W1 = tf.Variable(weight([FIELD_SIZE * EMBEDDING_SIZE, 256]))
+D_B1 = tf.Variable(tf.zeros(shape=[1, 256]))
 
-D_W2 = tf.Variable(weight([512, 256]))
-D_B2 = tf.Variable(tf.zeros(shape=[1, 256]))
+D_W2 = tf.Variable(weight([256, 128]))
+D_B2 = tf.Variable(tf.zeros(shape=[1, 128]))
 
-D_W3 = tf.Variable(weight([256, 32]))
+D_W3 = tf.Variable(weight([128, 32]))
 D_B3 = tf.Variable(tf.zeros(shape=[1, 32]))
 
 # 接下来就是最后一层即sigmoid的参数
@@ -99,7 +115,8 @@ weight_embedding = tf.Variable(
     tf.random_normal([FEATURE_SIZE, EMBEDDING_SIZE], 0.0, 0.01), name="feature_embedding"
 )
 # 用于一阶的情况
-bias_embedding = tf.Variable(tf.random_normal([FEATURE_SIZE, 1], 0.0, 1.0), name="feature_embedding_bias")
+bias_embedding = tf.Variable(tf.random_normal([FEATURE_SIZE, 1], 0.0, 1.0),
+                             name="feature_embedding_bias")
 
 """
 embedding部分
@@ -204,14 +221,14 @@ optimizer = tf.train.AdamOptimizer(learning_rate=0.001, beta1=0.9, beta2=0.999,
 """
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
-    for epoch in range(10000):
+    for epoch in range(300):
         for step in range(STEPS):
             epoch_loss, _ = sess.run([loss, optimizer], feed_dict={
                 feature_index: train_data_index[step * BATCH_SIZE:(step + 1) * BATCH_SIZE],
                 feature_value: train_data_value[step * BATCH_SIZE:(step + 1) * BATCH_SIZE],
                 label: train_y[step * BATCH_SIZE: (step + 1) * BATCH_SIZE], iS_training: True})
 
-        if epoch % 100 == 0:
+        if epoch % 50 == 0:
             print("epoch %s, loss is %s" % (str(epoch), str(epoch_loss)))
 
     """保存好训练的网络"""
