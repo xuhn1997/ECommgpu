@@ -87,7 +87,7 @@ if __name__ == '__main__':
 
     print("开始计算召回率.....")
     numbers = recall(recall_reault, test_recall)
-    print(numbers)  # 0.022886027810988547
+    print(numbers)  # 0.3535492938130298
     # n_union = 0.
     # recommend_sum = 0.
     # for user, item_set in test_recall.items():
