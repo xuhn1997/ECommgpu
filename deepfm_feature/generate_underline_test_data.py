@@ -39,3 +39,4 @@ def get_deepfm_test_data():
     'ability'， categoryID, shopID, brandID, 
     """
     return recall_df
+

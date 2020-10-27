@@ -157,3 +157,8 @@ def deal_underline_test_data():
 
     return test_feature_index, test_feature_value
 
+
+# test_data_index, test_data_value = deal_underline_test_data()
+# print("转换后测试的维度是。。。")
+# print(test_data_value.shape)
+# print(test_data_index.shape)

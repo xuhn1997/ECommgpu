@@ -4,6 +4,8 @@ import multiprocessing as mp
 import time
 import numpy as np
 import pandas as pd
+
+
 # import cython
 
 
@@ -95,6 +97,19 @@ def generate_logs_for_each_group(matrix, q):
 def get_logs_from(path):
     """
     获取分组好的用户的日志信息
+    :param path:
+    :return:
+    """
+    f = open(path, 'r')
+    a = f.read()
+    dict_name = eval(a)  # 将字符串转化成原始的数据类型
+    f.close()
+    return dict_name
+
+
+def get_file_from_txt(path):
+    """
+    将txt文件转化成原来的数据
     :param path:
     :return:
     """

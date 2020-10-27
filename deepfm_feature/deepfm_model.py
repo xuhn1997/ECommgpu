@@ -126,6 +126,8 @@ embedding部分
 初始化embedding的维度就是(总的特征数，要映射多大的embedding大小)
 """
 embeddings = tf.nn.embedding_lookup(weight_embedding, feature_index)  # 此时的维度就是N*K*F
+# 保存好embedding向量
+real_embeddings = embeddings
 # N表示样本数，K表示特征域的大小，这里的话就是9， F表示embedding的大小
 # 对于特征的值进行维度的转化才能与上面的的embedding进行广播相乘
 reshape_feature_value = tf.reshape(feature_value, [-1, FIELD_SIZE, 1])
@@ -196,8 +198,9 @@ def sigmoid_part(x_input):
 
 """开始串接以上的网络"""
 # 先获得deep部分得输出
-deep_input = tf.reshape(embeddings, (-1, FIELD_SIZE * EMBEDDING_SIZE))
-
+# deep_input = tf.reshape(embeddings, (-1, FIELD_SIZE * EMBEDDING_SIZE))
+# 利用真正的embedding向量
+deep_input = tf.reshape(real_embeddings, (-1, FIELD_SIZE * EMBEDDING_SIZE))
 deep_out = deep_part(deep_input)  # 此时维度就是(-1, 32)
 
 # 将所有的输出进行concat以下
@@ -228,10 +231,10 @@ with tf.Session() as sess:
                 feature_value: train_data_value[step * BATCH_SIZE:(step + 1) * BATCH_SIZE],
                 label: train_y[step * BATCH_SIZE: (step + 1) * BATCH_SIZE], iS_training: True})
 
-        if epoch % 50 == 0:
+        if epoch % 10 == 0:
             print("epoch %s, loss is %s" % (str(epoch), str(epoch_loss)))
 
     """保存好训练的网络"""
     saver = tf.train.Saver()
-    saver.save(sess, '../deepfm_save_model/deepfm_model_saver.ckpt')
+    saver.save(sess, '../deepfm_real_embeddings_save/deepfm_model_saver.ckpt')
     print("保存好DeepFM网络............")

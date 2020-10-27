@@ -1,3 +1,15 @@
+"""
+需要的一点就是
+使用的embedding_lookup的时候需要对全部特征排列
+成多个域，然后相乘到对应的值得到相应的embedding向量，
+对于连续值特征，值还是原来的值，但是它的索引只有一个，所以通过
+embedding_lookup取出来的embedding向量都是相同的，所以要乘以它的值
+而对于离散型特征，取出的就是它的embedding向量，因为乘以它的值1是不会改变的!!!!!!!
+
+但是对于原论文来说，只对域离散型做embedding操作，连续值做归一化就好的，然后进入
+网络的时候要进行bn操作。。。。。
+"""
+
 import sys
 import os
 
@@ -200,6 +212,7 @@ def predict_function(data_index, data_value):
 
     # 获取deepfm保存好的网络
     deepfm_model = '../deepfm_save_model/deepfm_model_saver.ckpt'
+    # deepfm_model = '../deepfm_real_embeddings_save/deepfm_model_saver.ckpt'
 
     y_pred = None
     with tf.Session() as sess:
@@ -232,6 +245,12 @@ def predict_function(data_index, data_value):
         return y_pred  # 维度为(-1, 1)
 
 
+# 测试一下输出的概率是？
+# test_data_index = test_data_index[0:1024]
+# test_data_value = test_data_value[0:1024]
+#
+# pred = predict_function(test_data_index, test_data_value)
+# print(pred[0:300])
 # pred = predict_function(test_data_index, test_data_value)
 # print(pred.shape)
 
