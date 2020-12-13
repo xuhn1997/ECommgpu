@@ -69,18 +69,18 @@ def recall_list_online_function():
     filename_commend_matrix = "../commonMatrix_iuf/common_matrix.npz"
     mat = load_npz(filename_commend_matrix)
     # 现在给1到15天的用户进行召回过程
-    recommends = recommend_users(N=500, user_logs=user_logs, mat=mat)  # 格式为{userID:{j, sim}, {j1, sim1}}
+    recommends = recommend_users(N=300, user_logs=user_logs, mat=mat)  # 格式为{userID:{j, sim}, {j1, sim1}}
     # 将召回的数据转化成dataframe格式
     recall_df = reshape_to_dataframe(recommends)  # 这里召回的1到15号的信息
     # 获取16天的用户行为，然后进行合并
     data_16 = get_label_function()  # 格式为userID， itemID，behavior的dataframe格式
 
-    tmp = pd.merge(left=recall_df, right=data_16, on=['userID', 'itemID'],
-                   how='left').rename(columns={'behavior': 'label'})
-    tmp.to_csv("../recall_list/train_data.csv", index=False)
+    # tmp = pd.merge(left=recall_df, right=data_16, on=['userID', 'itemID'],
+    #                how='left').rename(columns={'behavior': 'label'})
+    recall_df.to_csv("../recall_list/1_15_recall_data.csv", index=False)
     print("save successfully.......")
 
-    return tmp
+    return recall_df
 
 
 # user_logs = generate_online_train_user_sets()

@@ -150,24 +150,24 @@ def recommend(user, N, user_logs, mat, beta=1.0):
             recommends.setdefault(j, 0)
             # 还要考虑用户行为过的时间戳，还有用户行为的程度大小
             recommends[j] += sim * (1 + beta * abs(t_now - i3)) * i2
-        if len(recommends.keys()) >= N:
-            # 如果推荐的个数够N个商品的话则进行正常推荐
-            return dict(sorted(recommends.items(), key=itemgetter(1), reverse=True)[:N])
-        else:
-            # 但是推荐的商品个数要是不够N个的话则用热门商品进行补充
-            # residue = N - len(recommends.keys())  # 获取还有多少个进行补充
+    if len(recommends.keys()) >= N:
+        # 如果推荐的个数够N个商品的话则进行正常推荐
+        return dict(sorted(recommends.items(), key=itemgetter(1), reverse=True)[:N])
+    else:
+        # 但是推荐的商品个数要是不够N个的话则用热门商品进行补充
+        # residue = N - len(recommends.keys())  # 获取还有多少个进行补充
 
-            """
-              冷启动的部分注意
-              召回阶段不需要进行冷启动。。。
-              排序最后阶段阶段再需要冷启动
-            """
-            # residue_dict = code_start_user(user, user_logs, item_cate, residue)
+        """
+          冷启动的部分注意
+          召回阶段不需要进行冷启动。。。
+          排序最后阶段阶段再需要冷启动
+        """
+        # residue_dict = code_start_user(user, user_logs, item_cate, residue)
 
-            recommends_dict = dict(sorted(recommends.items(), key=itemgetter(1), reverse=True))
-            # recommends_dict.update(residue_dict)
+        recommends_dict = dict(sorted(recommends.items(), key=itemgetter(1), reverse=True))
+        # recommends_dict.update(residue_dict)
 
-            return recommends_dict
+        return recommends_dict
 
 
 def recommend_users(N, user_logs, mat):

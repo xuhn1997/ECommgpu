@@ -1,8 +1,29 @@
+from operator import itemgetter
+
 import pandas as pd
 import numpy as np
 from scipy.sparse import lil_matrix
-import scipy as scp
+import scipy
+import pickle as pck
 
+#
+# with open('../DssmModel/DSSM_recommends_300.pkl', 'rb') as f:
+#     re = pck.load(f)
+#
+# print(re[1084863])
+#
+#
+# df1 = pd.DataFrame.from_dict(re)
+#
+# print(df1.shape)
+# print(df1.head())
+# df2 = df1[[901447, 1084863]]
+# print(df2.head())
+#
+# temp = df2.to_dict(orient = 'list')
+# # print(df2[1084863].tolist())
+# print(temp)
+print("召回率为: %s" % str(8))
 """
    测试稀疏矩阵的一些用法
 """
@@ -91,7 +112,7 @@ import scipy as scp
 import tensorflow as tf
 import numpy as np
 import pandas as pd
-
+import faiss
 # tmp = np.random.randint(100, size=[10, 4, 1])
 # tmp = tf.reshape(tmp, (10, 4, 1))
 #
@@ -99,26 +120,89 @@ import pandas as pd
 
 # print(tmp1.shape)
 # import random
-b = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-a = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']
-b = np.reshape(b, (9, 1))
-a = np.reshape(a, (9, 1))
+# import copy
+#
+# b = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+# b1 = [100, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23]
+# print(set(b1))
+# a = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']
+# print(a)
+# l2 = sorted(set(a),key=a.index)
+# # print(set(a))
+# print(l2)
+# for i in set(a):
+#     print(i)
+# b = np.reshape(b, (-1, 1))
+# b1 = np.reshape(b1, (-1, 1))
+# b = b.astype(np.float32)
+# b1 = b1.astype(np.float32)
+# dim = 1
+#
+# k = 3
+# index = faiss.IndexFlatIP(dim)
+#
+# index.add(b1)
+#
+# D, I = index.search(b, k)
+#
+# print(I)
+# print(D)
+# tt = zip(a, b[0, :])
 
-print(b.shape)
-print(a.shape)
-# a = a.transpose(1, 0)
-# b = b.transpose(1, 0)
+# temp = sorted(tt, key=itemgetter(1), reverse=True)[:4] # 将商品的相似度进行降序排序
+# print(temp)
+# train_set = []
+#
+# # temp = b
+# train_set.append(b)
+# print(train_set)
+# # print(b)
+#
+# temp = copy.deepcopy(b)
+#
+# temp[-1] = 100
+# train_set.append(temp)
+# print(train_set)
+# print(b)
+# 测试mask
+# b = tf.reshape(b, (9, 1))
+# mask = tf.sequence_mask(b, 10, dtype=tf.float32)
+# print(mask.shape)
+# print(mask)
+# b = np.reshape(b, (9, 1))
+# a = np.reshape(a, (9, 1))
+# c = {"6":a}
+# c = {"dhajs": 89890}
+# with open('../data/c.pkl', 'wb') as f:
+#     pck.dump(c, f, pck.HIGHEST_PROTOCOL)
 
-print(a)
-print(b)
-randnum = np.random.randint(0,100)
-np.random.seed(randnum)
-np.random.shuffle(a)
-# a = a.transpose(1, 0)
-print(a)
-print(a.shape)
-np.random.seed(randnum)
-np.random.shuffle(b)
-# b = b.transpose(1, 0)
-print(b)
-print(b.shape)
+# fr = open('../data/a.pkl')
+# inf = pickle.load(fr)
+# fr.close()
+#
+# with open('../data/c.pkl', 'rb') as fr:
+#     data = pck.load(fr)
+# print(data)
+
+# print(inf)
+
+
+#
+# print(b.shape)
+# print(a.shape)
+# # a = a.transpose(1, 0)
+# # b = b.transpose(1, 0)
+#
+# print(a)
+# print(b)
+# randnum = np.random.randint(0,100)
+# np.random.seed(randnum)
+# np.random.shuffle(a)
+# # a = a.transpose(1, 0)
+# print(a)
+# print(a.shape)
+# np.random.seed(randnum)
+# np.random.shuffle(b)
+# # b = b.transpose(1, 0)
+# print(b)
+# print(b.shape)
